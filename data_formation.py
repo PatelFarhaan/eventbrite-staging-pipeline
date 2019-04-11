@@ -70,7 +70,6 @@ def ticket_details():
 
     return all_ticket_details
 
-
 def ticket_adapter():
     all_adapted_details = []
     tickets_resp = ticket_details()

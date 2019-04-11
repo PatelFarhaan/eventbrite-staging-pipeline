@@ -37,7 +37,7 @@ def ticket_details():
     for i in range(len(resp_data)):
         temp = resp_data[i]['tickets']
         for j in range(len(temp)-1):
-
+            ticket_event_name = resp_data[i]['event info'][0]['event name']
             ticket_class_data = {
                 "ticket_class": {
                     "name": resp_data[i]['tickets'][j]['ticket name'],
@@ -67,7 +67,9 @@ def ticket_details():
                     "cost": resp_data[i]['tickets'][j]['ticket price']
                 }
             }
-            all_ticket_details.append(ticket_class_data)
+            total_data = {}
+            total_data[ticket_event_name] = ticket_class_data
+            all_ticket_details.append(total_data)
     return all_ticket_details
 
 
@@ -91,6 +93,9 @@ def ticket_adapter():
         all_adapted_details.append(ticket_adapter_class)
 
     return all_adapted_details
+
+ans = ticket_adapter()
+print(ans)
 
 
 def formed_data():
@@ -145,6 +150,3 @@ def formed_data():
         total_formed_data.append(base_template)
 
     return total_formed_data
-
-ans = formed_data()
-print(ans)

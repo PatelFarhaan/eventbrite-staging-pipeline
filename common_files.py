@@ -4,7 +4,7 @@ from mysql.connector import pooling
 
 
 connection_pool = pooling.MySQLConnectionPool(pool_name="pynative_pool",pool_size=20,pool_reset_session=True,
-                                              host='localhost',database='farhaan',user='root',password='REDACTED_MYSQL_PASSWORD')
+                                              host='localhost',database='vishal',user='farhaan',password='REDACTED_MYSQL_PASSWORD')
 
 def get_conn():
     connection_object = connection_pool.get_connection()
