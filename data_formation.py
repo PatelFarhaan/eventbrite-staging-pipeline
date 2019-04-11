@@ -48,7 +48,7 @@ def ticket_details():
                     "minimum_quantity": resp_data[i]['tickets'][j]['minimum quantity'],
                     "maximum_quantity": resp_data[i]['tickets'][j]['maximum quantity'],
                     "quantity_total": resp_data[i]['tickets'][j]['ticket quantity'],
-                    "sales_start": resp_data[i]['tickets'][j]['ticket start date']+resp_data[i]['tickets'][i]['ticket start time'],
+                    "sales_start": resp_data[i]['tickets'][j]['ticket start date']+resp_data[i]['tickets'][j]['ticket start time'],
                     "sales_end": resp_data[i]['tickets'][j]['expiry date']+resp_data[i]['tickets'][j]['expiry time'],
                     "hidden": False,
                     "include_fee": False,
