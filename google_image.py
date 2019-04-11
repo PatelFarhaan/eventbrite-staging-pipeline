@@ -10,7 +10,7 @@ image_file = 'temp_images/temp_image.png'
 
 def download_media_file():
     urllib.request.urlretrieve(
-        'https://ercess.com'+resp_data['event info'][0]['profile image'], image_file)
+        'https://ercess.com'+resp_data[0]['event info'][0]['profile image'], image_file)
     return True
 
 

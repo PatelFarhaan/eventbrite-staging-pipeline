@@ -35,6 +35,7 @@ def tickets_str_to_timestamp(string_date):
 def ticket_details():
     all_ticket_details = []
     for i in range(len(resp_data)):
+        sub_list = []
         temp = resp_data[i]['tickets']
         for j in range(len(temp)-1):
             ticket_event_name = resp_data[i]['event info'][0]['event name']
@@ -67,35 +68,40 @@ def ticket_details():
                     "cost": resp_data[i]['tickets'][j]['ticket price']
                 }
             }
-            total_data = {}
-            total_data[ticket_event_name] = ticket_class_data
-            all_ticket_details.append(total_data)
+            sub_list.append(ticket_class_data)
+        temp_dict = {}
+        temp_dict[ticket_event_name] = sub_list
+        all_ticket_details.append(temp_dict)
     return all_ticket_details
 
 
 def ticket_adapter():
-    all_adapted_details = []
-    tickets_resp = ticket_details()
+    all_data = []
+    ticket_resp = ticket_details()
 
-    for i in tickets_resp:
-        ticket_adapter_class = {
-            'isExpanded': True,
-            'price': i['ticket_class']['cost'],
-            'name': i['ticket_class']['name'],
-            'validityStartDate': str(tickets_str_to_date(i['ticket_class']['sales_start'])),
-            'validityStartOptionAmPm': 'am' if tickets_str_to_time(i['ticket_class']['sales_start']).hour > 12 else 'pm',
-            'validityEndDate': str(tickets_str_to_date(i['ticket_class']['sales_end'])),
-            'validityEndOptionAmPm': 'am' if tickets_str_to_time(i['ticket_class']['sales_end']).hour > 12 else 'pm',
-            'rank': 1,
-            'validityStart': float(tickets_str_to_timestamp(i['ticket_class']['sales_start'])),
-            'validityEnd': float(tickets_str_to_timestamp(i['ticket_class']['sales_end']))
-        }
-        all_adapted_details.append(ticket_adapter_class)
+    for counter, i in enumerate(ticket_resp):
+        ticket_event_name = list(i.keys())[0]
+        temp_list = []
+        for j in range(len(ticket_resp[counter][ticket_event_name])):
+            ticket_adapter_class= {
+                'isExpanded': True,
+                'price': i[ticket_event_name][j]['ticket_class']['cost'],
+                'name': i[ticket_event_name][j]['ticket_class']['name'],
+                'validityStartDate': str(tickets_str_to_date(i[ticket_event_name][j]['ticket_class']['sales_start'])),
+                'validityStartOptionAmPm': 'am' if tickets_str_to_time(
+                    i[ticket_event_name][j]['ticket_class']['sales_start']).hour > 12 else 'pm',
+                'validityEndDate': str(tickets_str_to_date(i[ticket_event_name][j]['ticket_class']['sales_end'])),
+                'validityEndOptionAmPm': 'am' if tickets_str_to_time(i[ticket_event_name][j]['ticket_class']['sales_end']).hour > 12 else 'pm',
+                'rank': 1,
+                'validityStart': float(tickets_str_to_timestamp(i[ticket_event_name][j]['ticket_class']['sales_start'])),
+                'validityEnd': float(tickets_str_to_timestamp(i[ticket_event_name][j]['ticket_class']['sales_end']))
 
-    return all_adapted_details
-
-ans = ticket_adapter()
-print(ans)
+            }
+            temp_list.append(ticket_adapter_class)
+        temp_dict = {}
+        temp_dict[ticket_event_name] = temp_list
+        all_data.append(temp_dict)
+    return all_data
 
 
 def formed_data():
@@ -112,13 +118,13 @@ def formed_data():
         event_start_date = resp_data[i]['event info'][0]['start date']
         event_start_time = resp_data[i]['event info'][0]['start time']
         event_category = resp_data[i]['ercess partners categories'][0]['partner category']
-
+        ticket_adapter_obj = ticket_adapter()[i][event_name]
         base_template = {'title': event_name,
                          'description': event_desc,
                          'descriptionSections': [],
                          'bookingText': 'Book Tickets', #test
                          'participants': [],
-                         'ehPrices': ticket_adapter(),
+                         'ehPrices': ticket_adapter_obj,
                          'ehPricesDisplayCount': 1,
                          'images': [image_url],
                          'imageData': [json.dumps({"source_url":image_url,"original_image_url":image_url,"processed_image_url":image_url,"resized_image_url":image_url,"google_serving_url":image_url,"image_width":1000,"image_height":587,"image_size":547375,"dominant_color":"17 30 69","image_credits":""})],
