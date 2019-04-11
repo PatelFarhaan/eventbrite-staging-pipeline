@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 from mysql.connector import pooling
 
@@ -11,7 +12,7 @@ def get_conn():
     return connection_object, cursor
 
 
-def main_dict():
+def main_process(event_id,site_id,response):
 
     connection_object, cursor = get_conn()
     main_json = {}
@@ -24,15 +25,9 @@ def main_dict():
     ercess_partners_categories_list = []
     status_promotion_ticketing_list = []
 
-    with open('event_details.txt', 'r') as f:
-        event_details = f.read()
-
-    event_id = int(event_details.split(',')[0])
-    site_id = int(event_details.split(',')[1])
-    site_name = str(event_details.split(',')[2])
     sql = """SELECT * FROM articles2 WHERE id ='%d'""" %event_id
     try:
-        # import ipdb; ipdb.set_trace()
+
         cursor.execute(sql)
         data = cursor.fetchall()
         for info in data:
@@ -317,4 +312,30 @@ def main_dict():
     cursor.close()
     connection_object.close()
 
-    return main_json
+    response.append(main_json)
+
+
+def main_dict():
+    response = []
+    threads = []
+    event_details_all = []
+
+    with open('event_details.txt', 'r') as f:
+        event_details = f.readlines()
+
+    for i in event_details:
+        temp = i.replace('\n', '')
+        temp = tuple(temp.split(','))
+        event_details_all.append(temp)
+
+    for j in event_details_all:
+        event_id = int(j[0])
+        site_id = int(j[1])
+        t = threading.Thread(target=main_process,args=(event_id, site_id, response))
+        threads.append(t)
+        t.start()
+
+    for k in threads:
+        k.join()
+
+    return response

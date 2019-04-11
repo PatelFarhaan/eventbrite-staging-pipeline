@@ -7,7 +7,6 @@ ticket_ids = []
 event_ticket_ids = {}
 resp_data = main_dict()
 
-
 def datetime_to_iso(string_date):
     string_date = string_date[:10]+' '+string_date[10:]
     resp = datetime.strptime(string_date, '%Y-%m-%d %H:%M:%S')
