@@ -4,12 +4,34 @@ from mysql.connector import pooling
 
 
 connection_pool = pooling.MySQLConnectionPool(pool_name="pynative_pool",pool_size=20,pool_reset_session=True,
-                                              host='localhost',database='vishal',user='farhaan',password='REDACTED_MYSQL_PASSWORD')
+                                              host='localhost',database='farhaan',user='root',password='REDACTED_MYSQL_PASSWORD')
 
 def get_conn():
     connection_object = connection_pool.get_connection()
     cursor = connection_object.cursor()
     return connection_object, cursor
+
+def events_write_process():
+
+    connection_object, cursor = get_conn()
+
+    sql1 = """SELECT * FROM event_status_on_channel"""
+    try:
+        cursor.execute(sql1)
+        data1 = cursor.fetchall()
+        f = open('event_details.txt', 'w')
+        for info1 in data1:
+            eventid = info1[1]
+            siteid = info1[3]
+            res = (str(eventid)+','+str(siteid)+'\n')
+            f.write(res)
+
+    except Exception as e:
+        print('Something went wrong while fetching from event_status_on_channel')
+        print(e)
+
+    cursor.close()
+    connection_object.close()
 
 
 def main_process(event_id,site_id,response, index):
@@ -318,6 +340,7 @@ def main_process(event_id,site_id,response, index):
 def main_dict():
     threads = []
     event_details_all = []
+    # events_write_process()
 
     with open('event_details.txt', 'r') as f:
         event_details = f.readlines()
@@ -340,3 +363,5 @@ def main_dict():
         k.join()
 
     return response
+
+events_write_process()
