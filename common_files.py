@@ -15,14 +15,18 @@ def events_write_process():
 
     connection_object, cursor = get_conn()
 
-    sql1 = """SELECT * FROM event_status_on_channel"""
+    sql1 = """SELECT event_status_on_channel.event_id, partner_sites.table_id, partner_sites.site_name, event_status_on_channel.table_id 
+            FROM event_status_on_channel 
+            INNER JOIN partner_sites 
+            ON event_status_on_channel.site_id = partner_sites.table_id 
+            WHERE event_status_on_channel.promotion_status = 'ready to upload' AND partner_sites.method = 'manual'"""
     try:
         cursor.execute(sql1)
         data1 = cursor.fetchall()
         f = open('event_details.txt', 'w')
         for info1 in data1:
-            eventid = info1[1]
-            siteid = info1[3]
+            eventid = info1[0]
+            siteid = info1[1]
             res = (str(eventid)+','+str(siteid)+'\n')
             f.write(res)
 
@@ -32,6 +36,7 @@ def events_write_process():
 
     cursor.close()
     connection_object.close()
+
 
 
 def main_process(event_id,site_id,response, index):
@@ -340,7 +345,7 @@ def main_process(event_id,site_id,response, index):
 def main_dict():
     threads = []
     event_details_all = []
-    # events_write_process()
+    events_write_process()
 
     with open('event_details.txt', 'r') as f:
         event_details = f.readlines()
