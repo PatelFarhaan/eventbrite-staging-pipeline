@@ -94,7 +94,7 @@ def main_process(event_id,site_id,response, index):
         print('Something went wrong while fetching from articles2 table.')
         print(e)
 
-
+    import ipdb; ipdb.set_trace()
     #tickets
     # import ipdb; ipdb.set_trace()
     sql1 = """SELECT * FROM tickets WHERE event_id = '%d' and active = 1""" %event_id
@@ -368,3 +368,5 @@ def main_dict():
         k.join()
 
     return response
+
+main_process()
