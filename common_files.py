@@ -4,7 +4,7 @@ from mysql.connector import pooling
 
 
 connection_pool = pooling.MySQLConnectionPool(pool_name="pynative_pool",pool_size=20,pool_reset_session=True,
-                                              host='localhost',database='farhaan',user='root',password='REDACTED_MYSQL_PASSWORD')
+                                              host='localhost',database='vishal',user='farhaan',password='REDACTED_MYSQL_PASSWORD')
 
 def get_conn():
     connection_object = connection_pool.get_connection()
@@ -12,7 +12,7 @@ def get_conn():
     return connection_object, cursor
 
 
-def main_process(event_id,site_id,response):
+def main_process(event_id,site_id,response, index):
 
     connection_object, cursor = get_conn()
     main_json = {}
@@ -312,12 +312,11 @@ def main_process(event_id,site_id,response):
     cursor.close()
     connection_object.close()
 
-    response.append(main_json)
+    response[index] = main_json
 
 
 def main_dict():
     threads = []
-    response = []
     event_details_all = []
 
     with open('event_details.txt', 'r') as f:
@@ -328,10 +327,12 @@ def main_dict():
         temp = tuple(temp.split(','))
         event_details_all.append(temp)
 
-    for j in event_details_all:
+    response = [None] * len(event_details_all)
+
+    for index, j in enumerate(event_details_all):
         event_id = int(j[0])
         site_id = int(j[1])
-        t = threading.Thread(target=main_process,args=(event_id, site_id, response))
+        t = threading.Thread(target=main_process,args=(event_id, site_id, response, index))
         threads.append(t)
         t.start()
 
