@@ -39,7 +39,7 @@ def events_write_process():
 
 
 
-def main_process(event_id,site_id,response, index):
+def main_process(event_id,site_id,response,index):
 
     connection_object, cursor = get_conn()
     main_json = {}
@@ -114,6 +114,8 @@ def main_process(event_id,site_id,response, index):
             max_qty = info1[8]
             qty_left = info1[9]
             ticket_msg = info1[10]
+            if other_charges == '':
+                other_charges = 0
 
 
             ticket_start_date = str(info1[11])[:10]
@@ -345,7 +347,7 @@ def main_process(event_id,site_id,response, index):
 def main_dict():
     threads = []
     event_details_all = []
-    events_write_process()
+    # events_write_process()
 
     with open('event_details.txt', 'r') as f:
         event_details = f.readlines()
